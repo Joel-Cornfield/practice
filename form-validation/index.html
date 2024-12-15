@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 2rem;
+        }
+        form {
+            max-width: 400px;
+            margin: auto;
+            padding: 2rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        label {
+            display: block;
+            margin-top: 1rem;
+        }
+        input {
+            width: 100%;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input:invalid {
+            border-color: red;
+        }
+        .error {
+            color: red;
+            font-size: 0.875rem;
+            display: none;
+        }
+        .success {
+            color: green;
+            font-size: 1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Registration Form</h2>
+<form id="registrationForm" novalidate>
+    <label>Email:
+        <input type="email" id="email" required>
+        <span class="error" id="emailError">Please enter a valid email.</span>
+    </label>
+
+    <label>Country:
+        <input type="text" id="country" required>
+        <span class="error" id="countryError">Country is required.</span>
+    </label>
+
+    <label>Zip Code:
+        <input type="text" id="zip" pattern="\d{5}" required>
+        <span class="error" id="zipError">Enter a 5-digit zip code.</span>
+    </label>
+
+    <label>Password:
+        <input type="password" id="password" minlength="8" required>
+        <span class="error" id="passwordError">Password must be at least 8 characters.</span>
+    </label>
+
+    <label>Confirm Password:
+        <input type="password" id="confirmPassword" required>
+        <span class="error" id="confirmPasswordError">Passwords must match.</span>
+    </label>
+
+    <button type="submit">Submit</button>
+    <p class="success" id="successMessage" style="display: none;">🎉 High five! Form submitted successfully!</p>
+</form>
+
+<script>
+    const form = document.getElementById('registrationForm');
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        validateForm();
+    });
+
+    function validateForm() {
+        let isValid = true;
+
+        isValid &= validateField('email', email => email.validity.valid, 'emailError');
+        isValid &= validateField('country', country => country.value.trim() !== '', 'countryError');
+        isValid &= validateField('zip', zip => zip.validity.valid, 'zipError');
+        isValid &= validateField('password', password => password.value.length >= 8, 'passwordError');
+        isValid &= validateField('confirmPassword', confirmPassword => 
+            confirmPassword.value === document.getElementById('password').value, 'confirmPasswordError');
+
+        if (isValid) {
+            document.getElementById('successMessage').style.display = 'block';
+        }
+    }
+
+    function validateField(id, isValidFunc, errorId) {
+        const field = document.getElementById(id);
+        const error = document.getElementById(errorId);
+        const valid = isValidFunc(field);
+
+        if (!valid) {
+            error.style.display = 'block';
+            field.classList.add('invalid');
+        } else {
+            error.style.display = 'none';
+            field.classList.remove('invalid');
+        }
+        return valid;
+    }
+</script>
+
+</body>
+</html>
